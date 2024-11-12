@@ -100,7 +100,7 @@ class Graph(object):
 
         return min_index
 
-    # Function that implements Dijkstra's single source
+    # Does not work if there is a negative edge (use Bellman-Ford instead)
     # shortest path algorithm for a graph represented
     # using adjacency matrix representation
     def dijkstra(self, start_node):
@@ -175,6 +175,7 @@ class Graph(object):
         stack.append(v)
 
     # The function to do Topological Sort
+    # O(V + E)
     def topologicalSort(self):
         # Mark all the vertices as not visited
         visited = set()
@@ -189,6 +190,7 @@ class Graph(object):
         return stack[::-1]  # return list in reverse order
 
     # Function to print MST using Prim's algorithm
+    # Order [O(E log (V)]
     def prim_mst(self):
         pq = []  # Priority queue (Heap) to store vertices that are being processed
         src = 0  # Taking vertex 0 as the source
@@ -246,6 +248,8 @@ def partition(arr, l, r):
     # i will be the index of cut
     return i
 
+
+# - + Code finding meadian in O(n) [quick select/ quick sort]
 # find both kth largest element in array (only distinct elements)
 # or kth (first element is 1st, no 0th) element in the sorted array (including repeating elements)
 def kthSmallest(arr, l, r, k):
@@ -267,6 +271,62 @@ def kthSmallest(arr, l, r, k):
         return kthSmallest(arr, index + 1, r, k - index + l - 1)
     print("Index out of bound")
 
+
+
+
+
+def merge(arr, L, mid, R):
+    n1 = mid - L + 1
+    n2 = R - mid
+
+    # Create temp arrays
+    L = [0] * n1
+    R = [0] * n2
+
+    # Copy data to temp arrays L[] and R[]
+    for i in range(n1):
+        L[i] = arr[L + i]
+    for j in range(n2):
+        R[j] = arr[mid + 1 + j]
+
+    i = 0  # Initial index of first subarray
+    j = 0  # Initial index of second subarray
+    k = L  # Initial index of merged subarray
+
+    # Merge the temp arrays back
+    # into arr[left..right]
+    while i < n1 and j < n2:
+        if L[i] <= R[j]:
+            arr[k] = L[i]
+            i += 1
+        else:
+            arr[k] = R[j]
+            j += 1
+        k += 1
+
+    # Copy the remaining elements of L[],
+    # if there are any
+    while i < n1:
+        arr[k] = L[i]
+        i += 1
+        k += 1
+
+    # Copy the remaining elements of R[], 
+    # if there are any
+    while j < n2:
+        arr[k] = R[j]
+        j += 1
+        k += 1
+
+def merge_sort(arr, L, R):
+    if L < R:
+        mid = (L + R) // 2
+        merge_sort(arr, L, mid)
+        merge_sort(arr, mid + 1, R)
+        merge(arr, L, mid, R)
+
+
+        
 
 
 

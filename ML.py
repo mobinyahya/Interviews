@@ -54,7 +54,7 @@ df_sorted = df.sort_values(by='Age', ascending=False)
 # Row lambda operation on a single column
 df['Age_Double'] = df['Age'].apply(lambda x: x * 2)
 
-df = df.drop('Age_Double', axis=1)
+df = df.drop('Age_Double', axis=1) # axis= 1(/0) refers to the column(/row)
 
 # Row lambda operation on the whole row
 df["Filter"] = df.apply(lambda row: 1 if "Tom" not in row["Name"] else 0, axis=1)
@@ -143,7 +143,6 @@ x = np.linalg.solve(A, b) # solve for Ax = b
 
 # -------------------- Feature Stats
 # -----------------------------------
-con_cols = ['Kid']
 print(data.describe())
 print(data.info())
 (df.corr())
@@ -170,6 +169,7 @@ scaler = StandardScaler()
 X_train = scaler.fit_transform(X_train)
 X_test = scaler.transform(X_test)
 # or instead: 
+con_cols = ['Kid']
 X_train[con_cols] = scaler.fit_transform(X_train[con_cols])
 X_test[con_cols] = scaler.transform(X_test[con_cols])
 
@@ -187,35 +187,34 @@ regressor = SGDRegressor(max_iter=1000,  # Number of epochs
 model.fit(X_train, y_train)
 
 # Show feature importance
-feature_selection = False
-if feature_selection:
+# if feature_selection:
 
-    # --------- Approach in RandomForest
-    # ------------------------------------
-    model.fit(X_train, y_train)
-    feature_importances = pd.DataFrame(model.feature_importances_,
-                                       index=X_train.columns,
-                                       columns=['importance']).sort_values('importance', ascending=False)
+# --------- Approach in RandomForest
+# ------------------------------------
+model.fit(X_train, y_train)
+feature_importances = pd.DataFrame(model.feature_importances_,
+                                    index=X_train.columns,
+                                    columns=['importance']).sort_values('importance', ascending=False)
 
-    # ------- Approach in LinearRegression
-    # ------------------------------------
-    # Recursive Feature Elimination
-    rfe = RFE(model, n_features_to_select=3)
-    rfe.fit(X_train, y_train)
+# ------- Approach in LinearRegression
+# ------------------------------------
+# Recursive Feature Elimination
+rfe = RFE(model, n_features_to_select=3)
+rfe.fit(X_train, y_train)
 
-    # Print the boolean mask of selected features
-    print(f"Selected features: {X.columns[rfe.support_]}")
+# Print the boolean mask of selected features
+print(f"Selected features: {X.columns[rfe.support_]}")
 
-    # Print the ranking of the features
-    print(f"Feature ranking: {rfe.ranking_}")
+# Print the ranking of the features
+print(f"Feature ranking: {rfe.ranking_}")
 
 
-    # Transform the data to only include the selected features
-    X_train_selected = rfe.transform(X_train)
-    X_test_selected = rfe.transform(X_test)
+# Transform the data to only include the selected features
+X_train_selected = rfe.transform(X_train)
+X_test_selected = rfe.transform(X_test)
 
-    # Fit the model again using the selected features
-    model.fit(X_train_selected, y_train)
+# Fit the model again using the selected features
+model.fit(X_train_selected, y_train)
 
 # ------------------------------------
 # ---------------------- Lasso / Ridge
